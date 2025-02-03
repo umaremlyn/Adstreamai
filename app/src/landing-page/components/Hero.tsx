@@ -1,23 +1,34 @@
+import { routes } from 'wasp/client/router';
 import openSaasBannerWebp from '../../client/static/open-saas-banner.webp';
 import { DocsUrl } from '../../shared/common';
 
-export default function Hero() {
+interface HeroProps {
+  title?: string;
+  subtitle?: string;
+  callToAction?: string;
+  callToActionLink?: string;
+  image?: string;
+}
+
+export default function Hero({ title, subtitle, callToAction, callToActionLink, image }: HeroProps) {
   return (
-    <div className='relative pt-14 w-full'>
+    <div className="relative pt-14 w-full">
       <TopGradient />
       <BottomGradient />
-      <div className='py-24 sm:py-32'>
-        <div className='mx-auto max-w-8xl px-6 lg:px-8'>
-          <div className='lg:mb-18 mx-auto max-w-3xl text-center'>
-            <h1 className='text-4xl font-bold text-gray-900 sm:text-6xl dark:text-white'>
-              Some <span className='italic'>cool</span> words about your product
+      <div className="py-24 sm:py-32">
+        <div className="mx-auto max-w-8xl px-6 lg:px-8">
+          <div className="lg:mb-18 mx-auto max-w-3xl text-center">
+            {/* Title */}
+            <h1 className="text-4xl font-bold text-gray-900 sm:text-6xl dark:text-white">
+                {title || 'Transform Your Ads & Marketing with AI'}
             </h1>
-            <p className='mt-6 mx-auto max-w-2xl text-lg leading-8 text-gray-600 dark:text-white'>
-              With some more exciting words about your product!
+            {/* Subtitle */}
+            <p className="mt-6 mx-auto max-w-2xl text-lg leading-8 text-gray-600 dark:text-white">
+              {subtitle || 'Effortlessly create, optimize, and deploy AI-driven ad campaigns in minutes.'}
             </p>
             <div className='mt-10 flex items-center justify-center gap-x-6'>
               <a
-                href={DocsUrl}
+                href={routes.LoginRoute.to}
                 className='rounded-md px-3.5 py-2.5 text-sm font-semibold text-gray-700 ring-1 ring-inset ring-gray-200 hover:ring-2 hover:ring-yellow-300 shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 dark:text-white'
               >
                 Get Started <span aria-hidden='true'>→</span>

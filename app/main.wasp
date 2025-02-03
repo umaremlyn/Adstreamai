@@ -3,19 +3,19 @@ app OpenSaaS {
     version: "^0.15.0"
   },
 
-  title: "My Open SaaS App",
+  title: "AdStream AI",
 
   head: [
     "<meta charset='utf-8' />",
-    "<meta name='description' content='Your apps main description and features.' />",
-    "<meta name='author' content='Your (App) Name' />",
-    "<meta name='keywords' content='saas, solution, product, app, service' />",
+    "<meta name='description' content='Smart AI Marketing for You.' />",
+    "<meta name='author' content='AdStream AI' />",
+    "<meta name='keywords' content='AdStream, Ads, Adverts, Advertisemet, AI, Marketing, solution, product, app, service' />",
     
-    "<meta property='og:type' content='website' />",
-    "<meta property='og:title' content='Your Open SaaS App' />",
-    "<meta property='og:site_name' content='Your Open SaaS App' />",
+    "<meta property='og:type' content='AdStream AI' />",
+    "<meta property='og:title' content='Smart AI Marketing for You' />",
+    "<meta property='og:site_name' content='Smart AI Marketing for You' />",
     "<meta property='og:url' content='https://your-saas-app.com' />",
-    "<meta property='og:description' content='Your apps main description and features.' />",
+    "<meta property='og:description' content='Smart AI Marketing & Ads campain for You.' />",
     "<meta property='og:image' content='https://your-saas-app.com/public-banner.webp' />",
     "<meta name='twitter:image' content='https://your-saas-app.com/public-banner.webp' />",
     "<meta name='twitter:image:width' content='800' />",
@@ -37,8 +37,8 @@ app OpenSaaS {
       //   (RequestPasswordReset(Route|Page), PasswordReset(Route|Page), EmailVerification(Route|Page))
       email: {
         fromField: {
-          name: "Open SaaS App",
-          email: "me@example.com"
+          name: "AdStream AI",
+          email: "Leencotech@gmail.com"
         },
         emailVerification: {
           clientRoute: EmailVerificationRoute,
@@ -87,11 +87,11 @@ app OpenSaaS {
     // NOTE: "Dummy" provider is just for local development purposes.
     //   Make sure to check the server logs for the email confirmation url (it will not be sent to an address)!
     //   Once you are ready for production, switch to e.g. "SendGrid" or "Mailgun" providers. Check out https://docs.opensaas.sh/guides/email-sending/ .
-    provider: Dummy,
+    provider: Mailgun,
     defaultFrom: {
-      name: "Open SaaS App",
+      name: "AdStream",
       // When using a real provider, e.g. SendGrid, you must use the same email address that you configured your account to send out emails with!
-      email: "me@example.com"
+      email: "highendstitch@gmail.com"
     },
   },
 }

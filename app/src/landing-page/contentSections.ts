@@ -12,60 +12,73 @@ export const landingPageNavigationItems: NavigationItem[] = [
 ];
 export const features = [
   {
-    name: 'Cool Feature #1',
-    description: 'Describe your cool feature here.',
-    icon: '🤝',
+    name: "AI-Powered Campaigns",
+    description: "Leverage AI to create and manage marketing campaigns effortlessly.",
+    icon: "🤖",
+    href: "/ai-campaigns",
+  },
+  {
+    name: "Real-Time Analytics",
+    description: "Monitor your campaign performance with real-time dashboards.",
+    icon: "📊",
+    href: "/analytics",
+  },
+  {
+    name: 'Multi-Platform Support',
+    description: 'Launch campaigns across multiple platforms effortlessly.',
+    icon: "🔗",
     href: DocsUrl,
   },
   {
-    name: 'Cool Feature #2',
-    description: 'Describe your cool feature here.',
-    icon: '🔐',
-    href: DocsUrl,
-  },
-  {
-    name: 'Cool Feature #3',
-    description: 'Describe your cool feature here.',
-    icon: '🥞',
-    href: DocsUrl,
-  },
-  {
-    name: 'Cool Feature #4',
-    description: 'Describe your cool feature here.',
-    icon: '💸',
+    name: "User-Friendly Interface",
+    description: "Navigate easily with our intuitive design.",
+    icon: "🎨",
     href: DocsUrl,
   },
 ];
+
 export const testimonials = [
   {
-    name: 'Da Boi',
-    role: 'Wasp Mascot',
+    name: 'Mahir Maina',
+    role: 'Marketing Manager, Main Land Corp',
     avatarSrc: daBoiAvatar,
-    socialUrl: 'https://twitter.com/wasplang',
-    quote: "I don't even know how to code. I'm just a plushie.",
+    socialUrl: 'https://twitter.com/umaremlyn04',
+    quote: "AdStream AI transformed how we create ad campaigns. It's a game changer!.",
   },
   {
     name: 'Mr. Foobar',
-    role: 'Founder @ Cool Startup',
+    role: 'Founder @ Cool Starpets',
     avatarSrc: avatarPlaceholder,
     socialUrl: '',
-    quote: 'This product makes me cooler than I already am.',
+    quote: 'Our ROI improved significantly thanks to AdStream AI’s insights.',
   },
   {
-    name: 'Jamie',
-    role: 'Happy Customer',
+    name: 'Jamilah Smith',
+    role: 'CTO @ Lighthouse',
     avatarSrc: avatarPlaceholder,
     socialUrl: '#',
-    quote: 'My cats love it!',
+    quote: 'This is a game changer!',
   },
 ];
 
 export const faqs = [
   {
     id: 1,
-    question: 'Whats the meaning of life?',
-    answer: '42.',
+    question: "What is AdStream AI?",
+    answer: "AdStream AI is an AI-powered tool to create, optimize, and manage marketing campaigns across multiple platforms.",
     href: 'https://en.wikipedia.org/wiki/42_(number)',
+  },
+  {
+    id: 2,
+    question: "How much does it cost?",
+    answer: "We offer flexible pricing plans starting from $27/month. Contact us for enterprise pricing.",
+    href: 'https://en.wikipedia.org/wiki/42_',
+  },
+  {
+    id: 2,
+    question: "Can I try it for free?",
+    answer: "Yes, we offer a 14-day free trial for all new users.",
+    href: 'https://',
   },
 ];
 export const footerNavigation = {
@@ -74,7 +87,7 @@ export const footerNavigation = {
     { name: 'Blog', href: BlogUrl },
   ],
   company: [
-    { name: 'About', href: 'https://wasp-lang.dev' },
+    { name: 'About', href: 'https://Leencotech.dev' },
     { name: 'Privacy', href: '#' },
     { name: 'Terms of Service', href: '#' },
   ],

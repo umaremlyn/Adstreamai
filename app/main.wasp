@@ -51,10 +51,10 @@ app OpenSaaS {
         userSignupFields: import { getEmailUserFields } from "@src/auth/userSignupFields",
       },
       // Uncomment to enable Google Auth (check https://wasp-lang.dev/docs/auth/social-auth/google for setup instructions):
-      // google: { // Guide for setting up Auth via Google
-      //   userSignupFields: import { getGoogleUserFields } from "@src/auth/userSignupFields",
-      //   configFn: import { getGoogleAuthConfig } from "@src/auth/userSignupFields",
-      // },
+       google: { // Guide for setting up Auth via Google
+         userSignupFields: import { getGoogleUserFields } from "@src/auth/userSignupFields",
+         configFn: import { getGoogleAuthConfig } from "@src/auth/userSignupFields",
+       },
       // Uncomment to enable GitHub Auth (check https://wasp-lang.dev/docs/auth/social-auth/github for setup instructions):
       // gitHub: {
       //   userSignupFields: import { getGitHubUserFields } from "@src/auth/userSignupFields",
@@ -158,35 +158,37 @@ page DemoAppPage {
   component: import DemoAppPage from "@src/demo-ai-app/DemoAppPage"
 }
 
+// main.wasp (corrected)
+action createCampaign {
+  fn: import { createCampaign } from "@src/campaign/operations.js", // Changed from @server to @src
+  entities: [Campaign, AdCopy]
+}
+
+action updateCampaign {
+  fn: import { updateCampaign } from "@src/campaign/operations.js", // Changed from @server to @src
+  entities: [Campaign]
+}
+
+action deleteCampaign {
+  fn: import { deleteCampaign } from "@src/campaign/operations.js", // Changed from @server to @src
+  entities: [Campaign]
+}
+
+query getAllCampaignsByUser {
+  fn: import { getAllCampaignsByUser } from "@src/campaign/operations.js",
+  entities: [Campaign, AdCopy, User]
+}
+
 action generateGptResponse {
   fn: import { generateGptResponse } from "@src/demo-ai-app/operations",
-  entities: [User, Task, GptResponse]
-}
-
-action createTask {
-  fn: import { createTask } from "@src/demo-ai-app/operations",
-  entities: [Task]
-}
-
-action deleteTask {
-  fn: import { deleteTask } from "@src/demo-ai-app/operations",
-  entities: [Task]
-}
-
-action updateTask {
-  fn: import { updateTask } from "@src/demo-ai-app/operations",
-  entities: [Task]
+  entities: [User]
 }
 
 query getGptResponses {
   fn: import { getGptResponses } from "@src/demo-ai-app/operations",
-  entities: [User, GptResponse]
+  entities: [User]
 }
 
-query getAllTasksByUser {
-  fn: import { getAllTasksByUser } from "@src/demo-ai-app/operations",
-  entities: [Task]
-}
 //#endregion
 
 //#region Payment

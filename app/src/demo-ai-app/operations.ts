@@ -1,14 +1,13 @@
-import type { Task, GptResponse } from 'wasp/entities';
+import type { GptResponse } from 'wasp/entities';
+import type { Campaign, AdCopy } from 'wasp/entities';
 import type {
   GenerateGptResponse,
-  CreateTask,
-  DeleteTask,
-  UpdateTask,
-  GetGptResponses,
-  GetAllTasksByUser,
+  CreateCampaign,
+  UpdateCampaign,
+  DeleteCampaign,
+  GetAllCampaignsByUser,
 } from 'wasp/server/operations';
 import { HttpError } from 'wasp/server';
-import { GeneratedSchedule } from './schedule';
 import OpenAI from 'openai';
 
 const openai = setupOpenAI();
@@ -21,33 +20,30 @@ function setupOpenAI() {
 
 //#region Actions
 type GptPayload = {
-  hours: string;
+  productName: string;
+  targetAudience: string;
+  tone: string;
 };
 
-export const generateGptResponse: GenerateGptResponse<GptPayload, GeneratedSchedule> = async ({ hours }, context) => {
+type GeneratedAdCopies = {
+  adCopies: AdCopy[];
+};
+
+export const generateGptResponse: GenerateGptResponse<GptPayload, GeneratedAdCopies> = async (
+  { productName, targetAudience, tone },
+  context
+) => {
   if (!context.user) {
     throw new HttpError(401);
   }
 
-  const tasks = await context.entities.Task.findMany({
-    where: {
-      user: {
-        id: context.user.id,
-      },
-    },
-  });
-
-  const parsedTasks = tasks.map(({ description, time }) => ({
-    description,
-    time,
-  }));
-
   try {
-    // check if openai is initialized correctly with the API key
+    // Check if OpenAI is initialized correctly
     if (openai instanceof Error) {
       throw openai;
     }
 
+    // Validate user credits/subscription
     const hasCredits = context.user.credits > 0;
     const hasValidSubscription =
       !!context.user.subscriptionStatus &&
@@ -58,7 +54,6 @@ export const generateGptResponse: GenerateGptResponse<GptPayload, GeneratedSched
     if (!canUserContinue) {
       throw new HttpError(402, 'User has not paid or is out of credits');
     } else {
-      console.log('decrementing credits');
       await context.entities.User.update({
         where: { id: context.user.id },
         data: {
@@ -69,71 +64,52 @@ export const generateGptResponse: GenerateGptResponse<GptPayload, GeneratedSched
       });
     }
 
+    // Generate ad copies using OpenAI
     const completion = await openai.chat.completions.create({
-      model: 'gpt-3.5-turbo', // you can use any model here, e.g. 'gpt-3.5-turbo', 'gpt-4', etc.
+      model: 'gpt-4', // Use GPT-4 for better marketing content
       messages: [
         {
           role: 'system',
-          content:
-            'you are an expert daily planner. you will be given a list of main tasks and an estimated time to complete each task. You will also receive the total amount of hours to be worked that day. Your job is to return a detailed plan of how to achieve those tasks by breaking each task down into at least 3 subtasks each. MAKE SURE TO ALWAYS CREATE AT LEAST 3 SUBTASKS FOR EACH MAIN TASK PROVIDED BY THE USER! YOU WILL BE REWARDED IF YOU DO.',
+          content: `You are an expert marketing copywriter. Generate compelling ad copies based on the product details provided. 
+          Each campaign should include:
+          - A catchy headline
+          - Engaging body text
+          - A strong call-to-action
+          - 3 variations for A/B testing`,
         },
         {
           role: 'user',
-          content: `I will work ${hours} hours today. Here are the tasks I have to complete: ${JSON.stringify(
-            parsedTasks
-          )}. Please help me plan my day by breaking the tasks down into actionable subtasks with time and priority status.`,
+          content: `Create marketing content for:
+          Product: ${productName}
+          Target Audience: ${targetAudience}
+          Tone: ${tone}`,
         },
       ],
       tools: [
         {
           type: 'function',
           function: {
-            name: 'parseTodaysSchedule',
-            description: 'parses the days tasks and returns a schedule',
+            name: 'generateAdCopies',
+            description: 'Generates marketing ad copies',
             parameters: {
               type: 'object',
               properties: {
-                mainTasks: {
-                  type: 'array',
-                  description: 'Name of main tasks provided by user, ordered by priority',
-                  items: {
-                    type: 'object',
-                    properties: {
-                      name: {
-                        type: 'string',
-                        description: 'Name of main task provided by user',
-                      },
-                      priority: {
-                        type: 'string',
-                        enum: ['low', 'medium', 'high'],
-                        description: 'task priority',
-                      },
-                    },
-                  },
-                },
-                subtasks: {
+                adCopies: {
                   type: 'array',
                   items: {
                     type: 'object',
                     properties: {
-                      description: {
-                        type: 'string',
-                        description:
-                          'detailed breakdown and description of sub-task related to main task. e.g., "Prepare your learning session by first reading through the documentation"',
-                      },
-                      time: {
-                        type: 'number',
-                        description: 'time allocated for a given subtask in hours, e.g. 0.5',
-                      },
-                      mainTaskName: {
-                        type: 'string',
-                        description: 'name of main task related to subtask',
+                      headline: { type: 'string' },
+                      body: { type: 'string' },
+                      cta: { type: 'string' },
+                      variations: {
+                        type: 'array',
+                        items: { type: 'string' },
                       },
                     },
                   },
                 },
               },
-              required: ['mainTasks', 'subtasks', 'time', 'priority'],
             },
           },
         },
@@ -141,10 +117,10 @@ export const generateGptResponse: GenerateGptResponse<GptPayload, GeneratedSched
       tool_choice: {
         type: 'function',
         function: {
-          name: 'parseTodaysSchedule',
+          name: 'generateAdCopies',
         },
       },
-      temperature: 1,
+      temperature: 0.7,
     });
 
     const gptArgs = completion?.choices[0]?.message?.tool_calls?.[0]?.function.arguments;
@@ -153,17 +129,9 @@ export const generateGptResponse: GenerateGptResponse<GptPayload, GeneratedSched
       throw new HttpError(500, 'Bad response from OpenAI');
     }
 
-    console.log('gpt function call arguments: ', gptArgs);
-
-    await context.entities.GptResponse.create({
-      data: {
-        user: { connect: { id: context.user.id } },
-        content: JSON.stringify(gptArgs),
-      },
-    });
-
     return JSON.parse(gptArgs);
   } catch (error: any) {
+    // Refund credits if error occurred
     if (!context.user.subscriptionStatus && error?.statusCode != 402) {
       await context.entities.User.update({
         where: { id: context.user.id },
@@ -181,77 +149,69 @@ export const generateGptResponse: GenerateGptResponse<GptPayload, GeneratedSched
   }
 };
 
-export const createTask: CreateTask<Pick<Task, 'description'>, Task> = async ({ description }, context) => {
+export const createCampaign: CreateCampaign<Omit<Campaign, 'id' | 'status'>, Campaign> = async (
+  { productName, targetAudience, tone },
+  context
+) => {
   if (!context.user) {
     throw new HttpError(401);
   }
 
-  const task = await context.entities.Task.create({
+  return context.entities.Campaign.create({
     data: {
-      description,
+      productName,
+      targetAudience,
+      tone,
+      status: 'draft',
       user: { connect: { id: context.user.id } },
     },
   });
-
-  return task;
 };
 
-export const updateTask: UpdateTask<Partial<Task>, Task> = async ({ id, isDone, time }, context) => {
+export const updateCampaign: UpdateCampaign<Partial<Campaign>, Campaign> = async (
+  { id, ...updateData },
+  context
+) => {
   if (!context.user) {
     throw new HttpError(401);
   }
 
-  const task = await context.entities.Task.update({
-    where: {
-      id,
-    },
-    data: {
-      isDone,
-      time,
-    },
+  return context.entities.Campaign.update({
+    where: { id },
+    data: updateData,
   });
-
-  return task;
 };
 
-export const deleteTask: DeleteTask<Pick<Task, 'id'>, Task> = async ({ id }, context) => {
+export const deleteCampaign: DeleteCampaign<Pick<Campaign, 'id'>, Campaign> = async (
+  { id },
+  context
+) => {
   if (!context.user) {
     throw new HttpError(401);
   }
 
-  const task = await context.entities.Task.delete({
-    where: {
-      id,
-    },
+  return context.entities.Campaign.delete({
+    where: { id },
   });
-
-  return task;
 };
 //#endregion
 
 //#region Queries
-export const getGptResponses: GetGptResponses<void, GptResponse[]> = async (_args, context) => {
+export const getAllCampaignsByUser: GetAllCampaignsByUser<void, Campaign[]> = async (
+  _args,
+  context
+) => {
   if (!context.user) {
     throw new HttpError(401);
   }
-  return context.entities.GptResponse.findMany({
+  return context.entities.Campaign.findMany({
     where: {
       user: {
         id: context.user.id,
       },
     },
-  });
-};
-
-export const getAllTasksByUser: GetAllTasksByUser<void, Task[]> = async (_args, context) => {
-  if (!context.user) {
-    throw new HttpError(401);
-  }
-  return context.entities.Task.findMany({
-    where: {
-      user: {
-        id: context.user.id,
-      },
+    include: {
+      adCopies: true,
     },
     orderBy: {
       createdAt: 'desc',

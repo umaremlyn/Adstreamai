@@ -28,6 +28,7 @@ export const createFile: CreateFile<FileDescription, File> = async ({ fileType, 
       key,
       uploadUrl,
       type: fileType,
+      url: uploadUrl, // Assuming 'url' should be the same as 'uploadUrl'
       user: { connect: { id: context.user.id } },
     },
   });

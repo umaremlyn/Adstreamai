@@ -209,7 +209,7 @@ query getCustomerPortalUrl {
 }
 
 action generateCheckoutSession {
-  fn: import { generateCheckoutSession } from "@src/payment/operations",
+  fn: import { generateCheckoutSession } from "@src/payment/operations.ts",
   entities: [User]
 }
 

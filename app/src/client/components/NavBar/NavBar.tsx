@@ -13,12 +13,13 @@ import DarkModeSwitcher from '../DarkModeSwitcher';
 import { useIsLandingPage } from '../../hooks/useIsLandingPage';
 import { cn } from '../../cn';
 
+
 export interface NavigationItem {
   name: string;
   to: string;
 }
 
-const NavLogo = () => <img className='h-8 w-8' src={logo} alt='Your SaaS App' />;
+const NavLogo = () => <img className='h-8 w-8' src={logo} alt='AdStream AI App' />;
 
 export default function AppNavBar({ navigationItems }: { navigationItems: NavigationItem[] }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -40,7 +41,7 @@ export default function AppNavBar({ navigationItems }: { navigationItems: Naviga
           >
             <NavLogo />
             {isLandingPage && (
-              <span className='ml-2 text-sm font-semibold leading-6 dark:text-white'>Your Saas</span>
+              <span className='ml-2 text-sm font-semibold leading-6 dark:text-white'>AdStream AI</span>
             )}
           </WaspRouterLink>
         </div>
@@ -57,7 +58,7 @@ export default function AppNavBar({ navigationItems }: { navigationItems: Naviga
         <div className='hidden lg:flex lg:gap-x-12'>{renderNavigationItems(navigationItems)}</div>
         <div className='hidden lg:flex lg:flex-1 gap-3 justify-end items-center'>
           <ul className='flex justify-center items-center gap-2 sm:gap-4'>
-            <DarkModeSwitcher />
+            {/* <DarkModeSwitcher /> */}
           </ul>
           {isUserLoading ? null : !user ? (
             <WaspRouterLink to={routes.LoginRoute.to} className='text-sm font-semibold leading-6 ml-3'>
@@ -77,7 +78,7 @@ export default function AppNavBar({ navigationItems }: { navigationItems: Naviga
         <Dialog.Panel className='fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-white dark:text-white dark:bg-boxdark px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10'>
           <div className='flex items-center justify-between'>
             <WaspRouterLink to={routes.LandingPageRoute.to} className='-m-1.5 p-1.5'>
-              <span className='sr-only'>Your SaaS</span>
+              <span className='sr-only'>AdStream AI</span>
               <NavLogo />
             </WaspRouterLink>
             <button
@@ -104,7 +105,7 @@ export default function AppNavBar({ navigationItems }: { navigationItems: Naviga
                 )}
               </div>
               <div className='py-6'>
-                <DarkModeSwitcher />
+                {/* <DarkModeSwitcher /> */}
               </div>
             </div>
           </div>
